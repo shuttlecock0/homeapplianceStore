@@ -389,15 +389,23 @@ http PATCH localhost:8088/ordermgmts/1 orderStatus="orderTaken"
 	- 메시지 전달 api 있다고 가정함
 	- DB에는 저장하므로 GET으로 확인
 ```
-# 이 예제에서는 orderId 1에 해당하는 messageId는 1이다.
 # url끝에 해당 주문 정보인 orderId를 가진 messageId를 붙여준다.
+# 이 예제에서는 orderId 1에 해당하는 messageId는 1이다.
 http GET localhost:8088/messages/1
 ```
-![image](https://user-images.githubusercontent.com/47841725/127068423-cc9568e3-cc40-4bc4-80d7-38a1c926d98b.PNG)
+![image](https://user-images.githubusercontent.com/47841725/127069733-86d94f2f-1ea9-4960-8b12-702a43df7fea.PNG)
 
 [주문 취소하는 경우]
 1. 주문 취소하기 - PUT (Command-cancelOrder에 해당)
 ```
 http PATCH localhost:8088/orders/1 orderStatus="orderCancel"
 ```
-![8_주문취소](https://user-images.githubusercontent.com/85722733/125205690-7cc6d080-e2be-11eb-972f-3877814c55e6.jpg)
+![image](https://user-images.githubusercontent.com/47841725/127069426-ceea0c3a-b47a-4100-99e7-2dfdadfe06ec.PNG)
+
+2. 배송 취소되는 메시지 전송
+```
+# 주문 후 배송하는 경우 테스트 이후에 진행한 예제입니다.
+# message는 배송 성공/실패 모두 DB에 저장하므로 messageId는 자동 증가되어 2가 되었음.
+http GET localhost:8088/messages/2
+```
+![image](https://user-images.githubusercontent.com/47841725/127069739-b5c59ebe-b13a-4e57-92f9-1e06467127e3.PNG)

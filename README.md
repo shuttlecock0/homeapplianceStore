@@ -366,13 +366,14 @@ public interface OrdermgmtRepository extends PagingAndSortingRepository<Ordermgm
 
 - 적용 후 Rest API의 테스트
 
-주문 결제 후 ordermgmts 주문 접수하기 POST
+[주문 후 배송까지 진행되는 경우]
+1. ㅁㄴㅇㄹ
 ```
 http localhost:8082/ordermgmts orderId=1 itemId=1 itemName="ITbook" qty=1 customerName="HanYongSun" deliveryAddress="kyungkido sungnamsi" deliveryPhoneNumber="01012341234" orderStatus="order"
 ```
 ![image](https://user-images.githubusercontent.com/78421066/124939757-5b5ab000-e044-11eb-808b-2f610e6a6677.png)
 
-order 주문 취소하기 PATCH 
+주문 취소하는 경우
 ```
 http PATCH localhost:8088/orders/5 orderStatus="orderCanceled"
 ```

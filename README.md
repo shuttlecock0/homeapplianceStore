@@ -487,29 +487,6 @@ public class PaymentServiceFallback implements PaymentService {
     # ...중략
 ```
 
-- 동기식 호출에서는 호출 시간에 따른 타임 커플링이 발생하며, 결제 시스템이 장애가 나면 주문도 못받는다는 것을 확인:
-
-
-```
-# 결제 (pay) 서비스를 잠시 내려놓음
-cd ./pay/kubernetes
-kubectl delete -f deployment.yml
-
-# 수강 신청
-http POST http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/classes courseId=1 fee=10000 student=KimSoonHee textBook=eng_book #Fail
-http POST http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/classes courseId=1 fee=12000 student=JohnDoe textBook=kor_book #Fail
-
-# 결제서비스 재기동
-kubectl apply -f deployment.yml
-
-# 수강 신청
-http POST http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/classes courseId=1 fee=10000 student=KimSoonHee textBook=eng_book #Success
-http POST http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/classes courseId=1 fee=12000 student=JohnDoe textBook=kor_book #Success
-```
-
-- 또한 과도한 요청시에 서비스 장애가 도미노 처럼 벌어질 수 있다. 
-
-
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
 
 

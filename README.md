@@ -412,25 +412,27 @@ http GET localhost:8088/messages/2
 
 ## 동기식 호출 과 Fallback 처리
 
-분석단계에서의 조건 중 하나로 수강신청(class)->결제(pay) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
+분석단계에서의 조건 중 하나로 주문(order)->결제(payment) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
 
 - 결제서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 
 ```
 # (class) PaymentService.java
 
-package lecture.external;
+package homeappliancestore.external;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name="pay", url="${api.payment.url}", fallback = PaymentServiceFallback.class)
-public interface PaymentService {
+import java.util.Date;
 
-    @RequestMapping(method= RequestMethod.POST, path="/succeedPayment")
-    public boolean pay(@RequestBody Payment payment);
+@FeignClient(name="payment", url="http://localhost:8084", fallback = PaymentServiceFallback.class)
+public interface PaymentService {
+    @RequestMapping(method= RequestMethod.POST, path="/payments")
+    public void pay(@RequestBody Payment payment);
 
 }
 ```
@@ -438,43 +440,51 @@ public interface PaymentService {
 ```
 # (class) PaymentServiceFallback.java
 
-package lecture.external;
+package homeappliancestore.external;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class PaymentServiceFallback implements PaymentService {
-    @Override
-    public boolean pay(Payment payment) {
-        //do nothing if you want to forgive it
 
+    @Override
+    public void pay(Payment payment) {
         System.out.println("Circuit breaker has been opened. Fallback returned instead.");
-        return false;
     }
+
 }
+
 ```
 
 - 주문을 받은 직후(@PostPersist) 결제를 요청하도록 처리
 ```
-# Class.java (Entity)
+# Order.java (Entity)
     @PostPersist
-    public void onPostPersist() throws Exception {
-        Payment payment = new Payment();
-        payment.setClassId(this.getId());
-        payment.setCourseId(this.getCourseId());
-        payment.setFee(this.getFee());
-        payment.setStudent(this.getStudent());
-        payment.setStatus("PAYMENT_COMPLETED");
-        payment.setTextBook(this.getTextBook());
+    public void onPostPersist(){
+        OrderPlaced orderPlaced = new OrderPlaced();
+        BeanUtils.copyProperties(this, orderPlaced);
+        orderPlaced.publishAfterCommit();
 
-        if (ClassApplication.applicationContext.getBean(PaymentService.class).pay(payment)) {
-            ClassRegistered classRegistered = new ClassRegistered();
-            BeanUtils.copyProperties(this, classRegistered);
-            classRegistered.publishAfterCommit();
-        }else {
-            throw new RollbackException("Failed during payment");
-        }
+        //Following code causes dependency to external APIs
+        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+
+        homeappliancestore.external.Payment payment = new homeappliancestore.external.Payment();
+        // mappings goes here
+        payment.setOrderId(orderPlaced.getOrderId());
+        payment.setCustomerId(orderPlaced.getCustomerId());
+        payment.setCustomerName(orderPlaced.getCustomerName());
+        payment.setItemId(orderPlaced.getItemId());
+        payment.setItemName(orderPlaced.getItemName());
+        payment.setQty(orderPlaced.getQty());
+        payment.setItemPrice(orderPlaced.getItemPrice());
+        payment.setDeliveryAddress(orderPlaced.getDeliveryAddress());
+        payment.setDeliveryPhoneNumber(orderPlaced.getDeliveryPhoneNumber());
+        payment.setOrderStatus(orderPlaced.getOrderStatus());
+        OrderApplication.applicationContext.getBean(homeappliancestore.external.PaymentService.class)
+            .pay(payment);
+
     }
+    # ...중략
 ```
 
 - 동기식 호출에서는 호출 시간에 따른 타임 커플링이 발생하며, 결제 시스템이 장애가 나면 주문도 못받는다는 것을 확인:

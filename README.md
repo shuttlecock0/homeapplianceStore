@@ -367,8 +367,8 @@ public interface OrdermgmtRepository extends PagingAndSortingRepository<Ordermgm
 - 적용 후 Rest API의 테스트
 
 [주문 후 배송까지 진행되는 경우]
-	1. 주문하기 - POST (Command-order에 해당)
-	```
+1. 주문하기 - POST (Command-order에 해당)
+```
 http POST localhost:8088/orders customerId=1 customerName="Kang" itemId=2 itemName="Air conditional" qty=3 itemPrice=1500 deliveryAddress="Gangnam" deliveryPhoneNumber="010-0123-4567" orderStatus="orderStarted"
 ```
 ![image](https://user-images.githubusercontent.com/47841725/127066617-fd871864-fce3-476f-8519-9f19061e8351.PNG)
@@ -386,8 +386,8 @@ http PATCH localhost:8088/ordermgmts/1 orderStatus="orderTaken"
 ![image](https://user-images.githubusercontent.com/47841725/127068260-52087836-550a-44d1-9931-b738aeb64d6b.PNG)
 
 4. 배송 시작되는 메시지 전송
-- 메시지 전달 api 있다고 가정함
-- DB에는 저장하므로 GET으로 확인
+	- 메시지 전달 api 있다고 가정함
+	- DB에는 저장하므로 GET으로 확인
 ```
 # 이 예제에서는 orderId 1에 해당하는 messageId는 1이다.
 # url끝에 해당 주문 정보인 orderId를 가진 messageId를 붙여준다.

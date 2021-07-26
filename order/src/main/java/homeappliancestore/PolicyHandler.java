@@ -19,11 +19,10 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener UpdateOrderStatus : " + payCanceled.toJson() + "\n\n");
 
-
-
-        // Sample Logic //
-        // Order order = new Order();
-        // orderRepository.save(order);
+        // Logic //
+        orderRepository.findById(payCanceled.getOrderId()).ifPresent(order->{
+            orderRepository.save(order);
+        }); 
 
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -33,11 +32,10 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener UpdateOrderStatus : " + orderTaken.toJson() + "\n\n");
 
-
-
-        // Sample Logic //
-        // Order order = new Order();
-        // orderRepository.save(order);
+        // Logic //
+        orderRepository.findById(orderTaken.getOrderId()).ifPresent(order->{
+            orderRepository.save(order);
+        }); 
 
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -47,11 +45,10 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener UpdateOrderStatus : " + payApproved.toJson() + "\n\n");
 
-
-
-        // Sample Logic //
-        // Order order = new Order();
-        // orderRepository.save(order);
+        // Logic //
+        orderRepository.findById(payApproved.getOrderId()).ifPresent(order->{
+            orderRepository.save(order);
+        }); 
 
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -61,11 +58,10 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener UpdateOrderStatus : " + deliveryStarted.toJson() + "\n\n");
 
-
-
-        // Sample Logic //
-        // Order order = new Order();
-        // orderRepository.save(order);
+        // Logic //
+        orderRepository.findById(deliveryStarted.getOrderId()).ifPresent(order->{
+            orderRepository.save(order);
+        }); 
 
     }
 

@@ -33,6 +33,16 @@ public class Order {
 
         homeappliancestore.external.Payment payment = new homeappliancestore.external.Payment();
         // mappings goes here
+        payment.setOrderId(orderPlaced.getOrderId());
+        payment.setCustomerId(orderPlaced.getCustomerId());
+        payment.setCustomerName(orderPlaced.getCustomerName());
+        payment.setItemId(orderPlaced.getItemId());
+        payment.setItemName(orderPlaced.getItemName());
+        payment.setQty(orderPlaced.getQty());
+        payment.setItemPrice(orderPlaced.getItemPrice());
+        payment.setDeliveryAddress(orderPlaced.getDeliveryAddress());
+        payment.setDeliveryPhoneNumber(orderPlaced.getDeliveryPhoneNumber());
+        payment.setOrderStatus(orderPlaced.getOrderStatus());
         Application.applicationContext.getBean(homeappliancestore.external.PaymentService.class)
             .pay(payment);
 

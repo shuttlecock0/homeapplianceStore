@@ -382,7 +382,9 @@ http PATCH localhost:8088/payments/1 orderStatus="payApproved"
 http PATCH localhost:8088/ordermgmts/1 orderStatus="orderTaken"
 ```
 ![image](https://user-images.githubusercontent.com/47841725/127068260-52087836-550a-44d1-9931-b738aeb64d6b.PNG)
-4. 배송 시작되는 메시지 전송 (메시지 전달 api 있다고 가정함. DB에는 저장하므로 GET으로 확인, url끝에 해당 주문 정보인 orderId를 가진 messageId를 붙여준다.)
+4. 배송 시작되는 메시지 전송
+-- 메시지 전달 api 있다고 가정함.
+-- DB에는 저장하므로 GET으로 확인, url끝에 해당 주문 정보인 orderId를 가진 messageId를 붙여준다.)
 ```
 # 이 예제에서는 orderId 1에 해당하는 messageId는 1이다.
 http GET localhost:8088/messages/1

@@ -5,12 +5,12 @@ public class OrderTaken extends AbstractEvent {
     private Long orderMgmtId;
     private Long orderId;
     private Long customerId;
-    private String customerId;
-    private Long menuId;
+    private String customerName;
+    private Long itemId;
     private String itemName;
-    private Integer foodCount;
+    private Integer qty;
     private Integer itemPrice;
-    private String customerAddress;
+    private String deliveryAddress;
     private String deliveryPhoneNumber;
     private String orderStatus;
 
@@ -39,19 +39,19 @@ public class OrderTaken extends AbstractEvent {
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
-    public String getCustomerId() {
-        return customerId;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
-    public Long getMenuId() {
-        return menuId;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
     public String getItemName() {
         return itemName;
@@ -60,12 +60,12 @@ public class OrderTaken extends AbstractEvent {
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
-    public Integer getFoodCount() {
-        return foodCount;
+    public Integer getQty() {
+        return qty;
     }
 
-    public void setFoodCount(Integer foodCount) {
-        this.foodCount = foodCount;
+    public void setQty(Integer qty) {
+        this.qty = qty;
     }
     public Integer getItemPrice() {
         return itemPrice;
@@ -74,12 +74,12 @@ public class OrderTaken extends AbstractEvent {
     public void setItemPrice(Integer itemPrice) {
         this.itemPrice = itemPrice;
     }
-    public String getCustomerAddress() {
-        return customerAddress;
+    public String getDeliveryAddress() {
+        return deliveryAddress;
     }
 
-    public void setCustomerAddress(String customerAddress) {
-        this.customerAddress = customerAddress;
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
     public String getDeliveryPhoneNumber() {
         return deliveryPhoneNumber;

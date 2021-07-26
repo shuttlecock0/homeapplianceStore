@@ -43,16 +43,17 @@ public class Order {
         payment.setDeliveryAddress(orderPlaced.getDeliveryAddress());
         payment.setDeliveryPhoneNumber(orderPlaced.getDeliveryPhoneNumber());
         payment.setOrderStatus(orderPlaced.getOrderStatus());
-        Application.applicationContext.getBean(homeappliancestore.external.PaymentService.class)
+        OrderApplication.applicationContext.getBean(homeappliancestore.external.PaymentService.class)
             .pay(payment);
 
     }
     @PostUpdate
     public void onPostUpdate(){
-        OrderCanceled orderCanceled = new OrderCanceled();
-        BeanUtils.copyProperties(this, orderCanceled);
-        orderCanceled.publishAfterCommit();
-
+        if (this.orderStatus.equals("orderCancel")) {
+            OrderCanceled orderCanceled = new OrderCanceled();
+            BeanUtils.copyProperties(this, orderCanceled);
+            orderCanceled.publishAfterCommit();
+        }
     }
     @PrePersist
     public void onPrePersist(){

@@ -55,11 +55,11 @@ public class CancelOrderTaken extends AbstractEvent {
     public void setItemPrice(Integer itemPrice) {
         this.itemPrice = itemPrice;
     }
-    public String getCustomerAddress() {
+    public String getDeliveryAddress() {
         return deliveryAddress;
     }
 
-    public void setCustomerAddress(String deliveryAddress) {
+    public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
     public String getDeliveryPhoneNumber() {

@@ -25,17 +25,20 @@ public class Ordermgmt {
 
     @PostPersist
     public void onPostPersist(){
-        OrderTaken orderTaken = new OrderTaken();
-        BeanUtils.copyProperties(this, orderTaken);
-        orderTaken.publishAfterCommit();
-
     }
+
     @PostUpdate
     public void onPostUpdate(){
-        CancelOrderTaken cancelOrderTaken = new CancelOrderTaken();
-        BeanUtils.copyProperties(this, cancelOrderTaken);
-        cancelOrderTaken.publishAfterCommit();
-
+        if (this.orderStatus.equals("orderTaken")) {
+            OrderTaken orderTaken = new OrderTaken();
+            BeanUtils.copyProperties(this, orderTaken);
+            orderTaken.publishAfterCommit();
+        }
+        else if (this.orderStatus.equals("orderCanceled")) {
+            CancelOrderTaken cancelOrderTaken = new CancelOrderTaken();
+            BeanUtils.copyProperties(this, cancelOrderTaken);
+            cancelOrderTaken.publishAfterCommit();
+        }
     }
     @PrePersist
     public void onPrePersist(){

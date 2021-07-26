@@ -26,7 +26,7 @@ public class MyPageViewHandler {
             // view 객체 생성
             MyPage myPage = new MyPage();
             // view 객체에 이벤트의 Value 를 set 함
-            myPage.setId(payApproved.getOrderId());
+            myPage.setOrderId(payApproved.getOrderId());
             myPage.setCustomerName(payApproved.getCustomerName());
             myPage.setItemName(payApproved.getItemName());
             myPage.setQty(payApproved.getQty());

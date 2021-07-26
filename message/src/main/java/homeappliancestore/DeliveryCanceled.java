@@ -7,6 +7,7 @@ public class DeliveryCanceled extends AbstractEvent {
     private Long orderId;
     private String customerName;
     private String itemName;
+    private String deliveryAddress;
     private String deliveryPhoneNumber;
     private String orderStatus;
 
@@ -38,6 +39,14 @@ public class DeliveryCanceled extends AbstractEvent {
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+    
     public String getDeliveryPhoneNumber() {
         return deliveryPhoneNumber;
     }

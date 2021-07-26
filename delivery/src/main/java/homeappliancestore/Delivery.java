@@ -21,14 +21,20 @@ public class Delivery {
 
     @PostPersist
     public void onPostPersist(){
-        DeliveryStarted deliveryStarted = new DeliveryStarted();
-        BeanUtils.copyProperties(this, deliveryStarted);
-        deliveryStarted.publishAfterCommit();
-
-        DeliveryCanceled deliveryCanceled = new DeliveryCanceled();
-        BeanUtils.copyProperties(this, deliveryCanceled);
-        deliveryCanceled.publishAfterCommit();
-
+        if (this.orderStatus.equals("orderTaken")){
+            DeliveryStarted deliveryStarted = new DeliveryStarted();
+            BeanUtils.copyProperties(this, deliveryStarted);
+            deliveryStarted.publishAfterCommit();
+        }
+    }
+    
+    @PostUpdate
+    public void onPostUpdate(){
+        if (this.orderStatus.equals("cancelOrderTaken")){
+            DeliveryCanceled deliveryCanceled = new DeliveryCanceled();
+            BeanUtils.copyProperties(this, deliveryCanceled);
+            deliveryCanceled.publishAfterCommit();
+        }
     }
 
     public Long getDeliveryId() {

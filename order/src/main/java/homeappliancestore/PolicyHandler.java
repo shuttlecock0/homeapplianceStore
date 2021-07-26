@@ -21,6 +21,7 @@ public class PolicyHandler{
 
         // Logic //
         orderRepository.findById(payCanceled.getOrderId()).ifPresent(order->{
+            order.setOrderStatus("payCanceled");
             orderRepository.save(order);
         }); 
 
@@ -34,6 +35,7 @@ public class PolicyHandler{
 
         // Logic //
         orderRepository.findById(orderTaken.getOrderId()).ifPresent(order->{
+            order.setOrderStatus("orderTaken");
             orderRepository.save(order);
         }); 
 
@@ -47,6 +49,7 @@ public class PolicyHandler{
 
         // Logic //
         orderRepository.findById(payApproved.getOrderId()).ifPresent(order->{
+            order.setOrderStatus("payApproved");
             orderRepository.save(order);
         }); 
 
@@ -60,6 +63,7 @@ public class PolicyHandler{
 
         // Logic //
         orderRepository.findById(deliveryStarted.getOrderId()).ifPresent(order->{
+            order.setOrderStatus("deliveryStarted");
             orderRepository.save(order);
         }); 
 

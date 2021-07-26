@@ -1,9 +1,9 @@
-package bookdelivery.external;
+package homeappliancestore.external;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class PaymentServiceFallback implements PaymentService{
+public class PaymentServiceFallback implements PaymentService {
 
   @Override
   public void pay(Payment payment) {

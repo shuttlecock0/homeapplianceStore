@@ -36,18 +36,18 @@ public class OrderTaken extends AbstractEvent {
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
-    public String getCustomerId() {
+    public String getCustomerName() {
         return customerName;
     }
 
-    public void setCustomerId(String customerName) {
+    public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
-    public Long getMenuId() {
+    public Long getItemId() {
         return itemId;
     }
 
-    public void setMenuId(Long itemId) {
+    public void setItemId(Long itemId) {
         this.itemId = itemId;
     }
     public String getItemName() {
@@ -71,11 +71,11 @@ public class OrderTaken extends AbstractEvent {
     public void setItemPrice(Integer itemPrice) {
         this.itemPrice = itemPrice;
     }
-    public String getCustomerAddress() {
+    public String getDeliveryAddress() {
         return deliveryAddress;
     }
 
-    public void setCustomerAddress(String deliveryAddress) {
+    public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
     public String getDeliveryPhoneNumber() {

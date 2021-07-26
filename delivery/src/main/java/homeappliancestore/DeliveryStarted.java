@@ -6,8 +6,8 @@ public class DeliveryStarted extends AbstractEvent {
     private Long orderId;
     private String customerName;
     private String itemName;
-    private String 배달주소;
-    private String 배달연락처;
+    private String deliveryAddress;
+    private String deliveryPhoneNumber;
     private String orderStatus;
 
     public DeliveryStarted(){
@@ -42,19 +42,19 @@ public class DeliveryStarted extends AbstractEvent {
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
-    public String get배달주소() {
-        return 배달주소;
+    public String getDeliveryAddress() {
+        return deliveryAddress;
     }
 
-    public void set배달주소(String 배달주소) {
-        this.배달주소 = 배달주소;
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
-    public String get배달연락처() {
-        return 배달연락처;
+    public String getDeliveryPhoneNumber() {
+        return deliveryPhoneNumber;
     }
 
-    public void set배달연락처(String 배달연락처) {
-        this.배달연락처 = 배달연락처;
+    public void setDeliveryPhoneNumber(String deliveryPhoneNumber) {
+        this.deliveryPhoneNumber = deliveryPhoneNumber;
     }
     public String getOrderStatus() {
         return orderStatus;

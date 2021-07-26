@@ -19,11 +19,19 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener TakeOrderInfo : " + payApproved.toJson() + "\n\n");
 
-
-
-        // Sample Logic //
-        // Ordermgmt ordermgmt = new Ordermgmt();
-        // ordermgmtRepository.save(ordermgmt);
+        Ordermgmt ordermgmt = new Ordermgmt();
+        ordermgmt.setOrderId(payApproved.getOrderId());
+        ordermgmt.setCustomerId(payApproved.getCustomerId());
+        ordermgmt.setCustomerName(payApproved.getCustomerName());
+        ordermgmt.setItemId(payApproved.getItemId());
+        ordermgmt.setItemName(payApproved.getItemName());
+        ordermgmt.setQty(payApproved.getQty());
+        ordermgmt.setItemPrice(payApproved.getItemPrice());
+        ordermgmt.setDeliveryAddress(payApproved.getDeliveryAddress());
+        ordermgmt.setDeliveryPhoneNumber(payApproved.getDeliveryPhoneNumber());
+        ordermgmt.setOrderStatus(payApproved.getOrderStatus());
+        ordermgmtRepository.save(ordermgmt);
+        
 
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -33,11 +41,10 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener CancelOrder : " + orderCanceled.toJson() + "\n\n");
 
-
-
-        // Sample Logic //
-        // Ordermgmt ordermgmt = new Ordermgmt();
-        // ordermgmtRepository.save(ordermgmt);
+        ordermgmtRepository.findByOrderId(orderCanceled.getOrderId()).ifPresent(ordermgmt->{
+            ordermgmt.setOrderStatus("orderCanceled");
+            ordermgmtRepository.save(ordermgmt);
+        });
 
     }
 

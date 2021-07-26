@@ -8,7 +8,7 @@ public class CancelOrderTaken extends AbstractEvent {
     private String itemName;
     private Integer qty;
     private Integer itemPrice;
-    private String customerAddress;
+    private String deliveryAddress;
     private String deliveryPhoneNumber;
     private String orderStatus;
 
@@ -58,12 +58,12 @@ public class CancelOrderTaken extends AbstractEvent {
     public void setItemPrice(Integer itemPrice) {
         this.itemPrice = itemPrice;
     }
-    public String getCustomerAddress() {
-        return customerAddress;
+    public String getDeliveryAddress() {
+        return deliveryAddress;
     }
 
-    public void setCustomerAddress(String customerAddress) {
-        this.customerAddress = customerAddress;
+    public void setDelieryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
     public String getDeliveryPhoneNumber() {
         return deliveryPhoneNumber;

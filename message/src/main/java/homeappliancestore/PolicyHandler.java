@@ -21,9 +21,21 @@ public class PolicyHandler{
 
 
 
-        // Sample Logic //
-        // Message message = new Message();
-        // messageRepository.save(message);
+        // Logic //
+        Message message = new Message();
+        message.setOrderId(deliveryStarted.getOrderId());
+        message.setCustomerName(deliveryStarted.getCustomerName());
+        message.setItemName(deliveryStarted.getItemName());
+        message.setDeliveryAddress(deliveryStarted.getDeliveryAddress());
+        message.setDeliveryPhoneNumber(deliveryStarted.getDeliveryPhoneNumber());
+        message.setOrderStatus(deliveryStarted.getOrderStatus());
+        message.setMessage(
+            "The delivery of the " + message.getItemName() + " (order No: " +
+            message.getOrderId() + ") ordered by " + message.getCustomerName() +
+            " has been started. [Shipping to: " + message.getDeliveryAddress() +
+            " |Shpping Contact: " + message.getDeliveryPhoneNumber() + " ]"
+        );
+        messageRepository.save(message);
 
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -35,9 +47,21 @@ public class PolicyHandler{
 
 
 
-        // Sample Logic //
-        // Message message = new Message();
-        // messageRepository.save(message);
+        // Logic //
+        Message message = new Message();
+        message.setOrderId(deliveryCanceled.getOrderId());
+        message.setCustomerName(deliveryCanceled.getCustomerName());
+        message.setItemName(deliveryCanceled.getItemName());
+        message.setDeliveryAddress(deliveryCanceled.getDeliveryAddress());
+        message.setDeliveryPhoneNumber(deliveryCanceled.getDeliveryPhoneNumber());
+        message.setOrderStatus(deliveryCanceled.getOrderStatus());
+        message.setMessage(
+            "The delivery of the " + message.getItemName() + " (order No: " +
+            message.getOrderId() + ") ordered by " + message.getCustomerName() +
+            " has been canceled. [Shipping to: " + message.getDeliveryAddress() +
+            " |Shpping Contact: " + message.getDeliveryPhoneNumber() + " ]"
+        );
+        messageRepository.save(message);
 
     }
 

@@ -19,11 +19,10 @@ public class PolicyHandler{
 
         System.out.println("\n\n##### listener CancelPay : " + cancelOrderTaken.toJson() + "\n\n");
 
-
-
-        // Sample Logic //
-        // Payment payment = new Payment();
-        // paymentRepository.save(payment);
+        paymentRepository.findByOrderId(cancelOrderTaken.getOrderId()).ifPresent(payment->{
+            payment.setOrderStatus("cancelOrderTaken");
+            paymentRepository.save(payment);
+        });
 
     }
 

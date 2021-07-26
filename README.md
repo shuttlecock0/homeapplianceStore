@@ -214,3 +214,166 @@ cd gateway
 mvn spring-boot:run 
 ```
 
+## DDD 의 적용
+
+- Entity Pattern 과 Repository Pattern 을 적용하여 JPA 를 통하여 데이터 접근 어댑터를 개발하였는가? 
+
+각 서비스 내에 도출된 핵심 Aggregate Root 객체를 Entity로 선언하였다. (주문(order), 결제(payment), 주문관리(ordermgmt), 배송(delivery), 메시지(Message))
+
+주문관리 Entity (Ordermgmt.java)
+```
+@Entity
+@Table(name="Ordermgmt_table")
+public class Ordermgmt {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long orderMgmtId;
+    private Long orderId;
+    private Long customerId;
+    private String customerName;
+    private Long itemId;
+    private String itemName;
+    private Integer qty;
+    private Integer itemPrice;
+    private String deliveryAddress;
+    private String deliveryPhoneNumber;
+    private String orderStatus;
+
+    @PostPersist
+    public void onPostPersist(){
+    }
+
+    @PostUpdate
+    public void onPostUpdate(){
+        if (this.orderStatus.equals("orderTaken")) {
+            OrderTaken orderTaken = new OrderTaken();
+            BeanUtils.copyProperties(this, orderTaken);
+            orderTaken.publishAfterCommit();
+        }
+        else if (this.orderStatus.equals("orderCanceled")) {
+            CancelOrderTaken cancelOrderTaken = new CancelOrderTaken();
+            BeanUtils.copyProperties(this, cancelOrderTaken);
+            cancelOrderTaken.publishAfterCommit();
+        }
+    }
+    @PrePersist
+    public void onPrePersist(){
+    }
+
+    public Long getOrderMgmtId() {
+        return orderMgmtId;
+    }
+
+    public void setOrderMgmtId(Long orderMgmtId) {
+        this.orderMgmtId = orderMgmtId;
+    }
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+    public Integer getQty() {
+        return qty;
+    }
+
+    public void setQty(Integer qty) {
+        this.qty = qty;
+    }
+    public Integer getItemPrice() {
+        return itemPrice;
+    }
+
+    public void setItemPrice(Integer itemPrice) {
+        this.itemPrice = itemPrice;
+    }
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+    public String getDeliveryPhoneNumber() {
+        return deliveryPhoneNumber;
+    }
+
+    public void setDeliveryPhoneNumber(String deliveryPhoneNumber) {
+        this.deliveryPhoneNumber = deliveryPhoneNumber;
+    }
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+}
+```
+
+Entity Pattern 과 Repository Pattern 을 적용하여 JPA 를 통하여 다양한 데이터소스 유형 (RDB or NoSQL) 에 대한 별도의 처리가 없도록 하였고 데이터 접근 어댑터를 자동 생성하기 위하여 Spring Data REST 의 RestRepository 를 적용하였다 
+
+OrdermgmtRepository.java
+```
+package homeappliancestore;
+
+import java.util.Optional;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+@RepositoryRestResource(collectionResourceRel="ordermgmts", path="ordermgmts")
+public interface OrdermgmtRepository extends PagingAndSortingRepository<Ordermgmt, Long>{
+  Optional<Ordermgmt> findByOrderId(Long orderId);
+
+}
+```
+
+
+- 분석단계에서의 유비쿼터스 랭귀지 (업무현장에서 쓰는 용어) 를 사용하여 소스코드가 서술되었는가?
+
+가능한 현업에서 사용하는 언어(유비쿼터스 랭귀지)를 모델링 및 구현 시 그대로 사용하려고 노력하였다.
+
+- 적용 후 Rest API의 테스트
+
+주문 결제 후 ordermgmts 주문 접수하기 POST
+```
+http localhost:8082/ordermgmts orderId=1 itemId=1 itemName="ITbook" qty=1 customerName="HanYongSun" deliveryAddress="kyungkido sungnamsi" deliveryPhoneNumber="01012341234" orderStatus="order"
+```
+![image](https://user-images.githubusercontent.com/78421066/124939757-5b5ab000-e044-11eb-808b-2f610e6a6677.png)
+
+order 주문 취소하기 PATCH 
+```
+http PATCH localhost:8088/orders/5 orderStatus="orderCanceled"
+```
+![8_주문취소](https://user-images.githubusercontent.com/85722733/125205690-7cc6d080-e2be-11eb-972f-3877814c55e6.jpg)

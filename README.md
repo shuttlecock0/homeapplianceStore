@@ -148,11 +148,11 @@
 
 ### 폴리시의 이동과 컨텍스트 매핑(점선은 Pub/Sub, 실선은 Req/Resp)을 통해 완성된 모형
 
-<img src="https://user-images.githubusercontent.com/47841725/126952855-323ae797-9e63-48da-bc75-d95b9c7fdee5.PNG"  width="80%" height="80%">
+<img src="https://user-images.githubusercontent.com/47841725/127060540-e480e2e3-54a0-4ea6-adb5-6788a571d547.PNG"  width="80%" height="80%">
 
 ### 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 
-<img src="https://user-images.githubusercontent.com/47841725/126955381-1ade0d54-7e63-4903-bb08-e3678a765c41.PNG"  width="90%" height="90%">
+<img src="https://user-images.githubusercontent.com/47841725/127061125-e4f78d12-0d83-4669-8c58-cbd6005a39b1.PNG"  width="90%" height="90%">
 
     - 고객이 가전제품을 선택하여 주문한다 (ok)
     - 고객이 결제한다 (ok)
@@ -161,7 +161,7 @@
     - 가전제품 포장이 완료되면 해당 매장 소속의 배달기사가 배송을 시작한다 (ok)
     - 배송이 시작되면 고객에게 배송 시작 정보를 메시지로 전달한다.
 
-<img src="https://user-images.githubusercontent.com/47841725/126955483-c03eafce-e944-4016-8284-cf2724cfe8c5.PNG"  width="90%" height="90%">
+<img src="https://user-images.githubusercontent.com/47841725/127061183-1a13811a-7d41-4b59-a316-da047dad80f4.PNG"  width="90%" height="90%">
  
     - 고객이 주문을 취소할 수 있다 (ok)
     - 주문이 취소되면 배송 및 결제가 취소된다 (ok)

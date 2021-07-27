@@ -487,133 +487,49 @@ public class PaymentServiceFallback implements PaymentService {
     # ...중략
 ```
 
-## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
+## 비동기식 호출과 Eventual Consistency 
+(이벤트 드리븐 아키텍처)
 
+- 카프카를 이용하여 PubSub 으로 하나 이상의 서비스가 연동되었는가?
 
-결제가 이루어진 후에 배송시스템으로 이를 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 배송 시스템의 처리를 위하여 결제주문이 블로킹 되지 않아도록 처리한다.
- 
-- 이를 위하여 결제이력에 기록을 남긴 후에 곧바로 결제승인이 되었다는 도메인 이벤트를 카프카로 송출한다(Publish)
- 
+카프카를 이용하여 주문완료 시 결제 처리 부붐을 제외한 나머지 모든 마이크로서비스 트랜잭션은 Pub/Sub 관계로 구현함.
+
+- Correlation-key: 각 이벤트 건 (메시지)가 어떠한 폴리시를 처리할때 어떤 건에 연결된 처리건인지를 구별하기 위한 Correlation-key 연결을 제대로 구현 하였는가?
+
+아래는 결제취소 이벤트(PayCanceled)를 카프카를 통해 쿠폰(coupon) 서비스에 연계받는 코드 내용이다. 
+
+payment 서비스에서는 고객의 주문취소 -> 점주의 주문접수취소 시 PostUpdate로 PayCanceled 이벤트를 발생시키고,
 ```
-package lecture;
-
-@Entity
-@Table(name = "Payment_table")
 public class Payment {
-
-...
-    @PostPersist
-    public void onPostPersist() {
-        PaymentApproved paymentApproved = new PaymentApproved();
-        BeanUtils.copyProperties(this, paymentApproved);
-        paymentApproved.publishAfterCommit();
+    @PostUpdate
+    public void onPostUpdate(){
+        PayCanceled payCanceled = new PayCanceled();
+        BeanUtils.copyProperties(this, payCanceled);
+        payCanceled.publishAfterCommit();
     }
 ```
-- 배송 서비스에서는 결제승인 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다:
 
+coupon 서비스에서는 카프카 리스너를 통해 payment PayCanceled 이벤트를 수신받아서 폴리시(cancelCoupon) 처리하였다. (getOrderId()를 호출하여 Correlation-key 연결)
+
+coupon 서비스의 PolicyHandler.java
 ```
-package lecture;
-
-...
-
 @Service
-public class PolicyHandler {
-
-    @Autowired
-    DeliveryRepository deliveryRepository;
-
-    @Autowired
-    CourseRepository courseRepository;
+public class PolicyHandler{
+    @Autowired CouponRepository couponRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverPaymentApproved_DeliveryTextbook(@Payload PaymentApproved paymentApproved) {
+    public void wheneverPayCanceled_CancelCoupon(@Payload PayCanceled payCanceled){
 
-        if (paymentApproved.isMe()) {
+        if(!payCanceled.validate()) return;
 
-            Delivery delivery = new Delivery();
-            delivery.setClassId(paymentApproved.getClassId());
-            delivery.setCourseId(paymentApproved.getCourseId());
-            delivery.setStudent(paymentApproved.getStudent());
-            delivery.setPaymentId(paymentApproved.getId());
-            delivery.setTextBook(paymentApproved.getTextBook());
-            delivery.setStatus("DELIVERY_START");
+        System.out.println("\n\n##### listener CancelCoupon : " + payCanceled.toJson() + "\n\n");
 
-            Optional<Course> opt = courseRepository.findById(paymentApproved.getClassId());
+        couponRepository.findByOrderId(payCanceled.getOrderId()).ifPresent(coupon->{
+            coupon.setCouponStatus("invalid");
+            couponRepository.save(coupon);
+        }); 
 
-            Course course;
-            if (opt.isPresent()) {
-                course = opt.get();
-                delivery.setTextBook(course.getTextBook());
-            }
-            deliveryRepository.save(delivery);
-        }
     }
-```
-실제 구현을 하자면, 학생은 결제완료와 동시에 책 배송 및 수강신청이 완료 되었다는 SMS를 받고, 이후 수강/결제/배송 상태 변경은 Mypage Aggregate 내에서 처리
-  
-```
-    @Autowired
-
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whenPaymentApproved_then_CREATE_1(@Payload PaymentApproved paymentApproved) {
-        try {
-            if (paymentApproved.isMe()) {
-                InquiryMypage inquiryMypage = new InquiryMypage();
-                inquiryMypage.setClassId(paymentApproved.getClassId());
-                inquiryMypage.setPaymentId(paymentApproved.getId());
-                inquiryMypage.setCourseId(paymentApproved.getCourseId());
-                inquiryMypage.setFee(paymentApproved.getFee());
-                inquiryMypage.setStudent(paymentApproved.getStudent());
-                inquiryMypage.setPaymentStatus(paymentApproved.getStatus());
-                inquiryMypage.setTextBook(paymentApproved.getTextBook());
-                inquiryMypage.setStatus("CLASS_START");
-				
-                // view 레파지토리에 save
-                inquiryMypageRepository.save(inquiryMypage);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-	
-	@StreamListener(KafkaProcessor.INPUT)
-    public void whenTextbookDeliveried_then_UPDATE_2(@Payload TextbookDeliveried textbookDeliveried) {
-        try {
-            if (textbookDeliveried.isMe()) {
-                List<InquiryMypage> inquiryMypageList = inquiryMypageRepository
-                        .findByPaymentId(textbookDeliveried.getPaymentId());
-                for (InquiryMypage inquiryMypage : inquiryMypageList) {
-                    inquiryMypage.setDeliveryStatus(textbookDeliveried.getStatus());
-
-                    // view 레파지 토리에 save
-                    inquiryMypageRepository.save(inquiryMypage);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-```
-
-배송 시스템은 수강신청/결제와 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 배송시스템이 유지보수로 인해 잠시 내려간 상태라도 수강신청을 받는데 문제가 없다:
-
-```
-# 배송 서비스 (course) 를 잠시 내려놓음 
-cd ./course/kubernetes
-kubectl delete -f deployment.yml
-
-# 수강 신청
-http POST http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/classes courseId=1 fee=10000 student=KimSoonHee textBook=eng_book #Success
-http POST http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/classes courseId=1 fee=12000 student=JohnDoe textBook=kor_book #Success
-
-# 수강 신청 상태 확인
-http GET http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/classes   # 수강 신청 완료 
-http GET http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/inquiryMypages  # 배송 상태 "deliveryStatus": null
-
-# 배송 서비스 (course) 기동
-kubectl apply -f deployment.yml
-
-# 배송 상태 확인
-http GET http://aa8ed367406254fc0b4d73ae65aa61cd-24965970.ap-northeast-2.elb.amazonaws.com:8080/inquiryMypages  # 배송 상태 "deliveryStatus": "DELIVERY_START"
+    ...생략
 ```
 

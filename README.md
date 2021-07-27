@@ -741,4 +741,14 @@ kubectl get all로 확인
 ![image](https://user-images.githubusercontent.com/47841725/127101158-2e6717fd-6f39-4d75-a083-9adc051fc2eb.png)
 
 
+## Self-healing (Liveness Probe)
+- 정상작동 중 확인
+
+![image](https://user-images.githubusercontent.com/47841725/127101893-7229fac0-dda0-4d8e-a3b8-b7a0b14a541c.png)
+
+- 포트 및 경로 잘못된 값으로 변경 후 retry 시도 확인
+order.yml 파일을 수정
+![image](https://user-images.githubusercontent.com/47841725/127102507-15fe069f-3e5f-4602-aa59-ebd90c9531e9.png)
+![image](https://user-images.githubusercontent.com/47841725/127102659-32f40bfd-826d-403c-9f2c-8ff7e996f002.png)
+
 

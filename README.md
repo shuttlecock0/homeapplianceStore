@@ -490,7 +490,9 @@ fall back이 없는 경우에는 결제시스템(Payment)가 다운되었을 때
 하지만 fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템이 장애가 전파되지 않습니다. 즉 fallback 처리를 통해 장애를 격리 할 수 있습니다.
 
 위코드를 실행하면 아래와 같은 문구가 나오는 것을 확인할 수 있습니다.
-<img src="https://user-images.githubusercontent.com/47841725/127077061-77119b32-564e-4592-bdb9-3d60bbc492a7.PNG">
+
+<img src="https://user-images.githubusercontent.com/47841725/127077061-77119b32-564e-4592-bdb9-3d60bbc492a7.PNG" width="80%" height="80%">
+
 
 ## 비동기식 호출과 Eventual Consistency 
 (이벤트 드리븐 아키텍처)

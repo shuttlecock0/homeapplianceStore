@@ -526,6 +526,9 @@ fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템�
 
 - 카프카를 이용하여 PubSub 으로 하나 이상의 서비스가 연동되었는가?
 주문 후 결제를 제외한 나머지 마이크로서비스 트랜잭션은 Pub/Sub 관계인 **SAGA**패턴으로 구현함.
+Pub/Sub 이벤트를 보여주는 예 (주문 취소 하는 경우)
+
+![image](https://user-images.githubusercontent.com/47841725/127081799-574f70fa-05fa-415e-8413-5f1d0bf1abd2.png)
 
 - Correlation-key: 각 이벤트 건 (메시지)가 어떠한 폴리시를 처리할때 어떤 건에 연결된 처리건인지를 구별하기 위한 Correlation-key 연결을 제대로 구현 하였는가?
 findByOrderId를 통해 orderId값을 기준으로 건별로 처리하여 Correlation-key 관계를 형성합니다.

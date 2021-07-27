@@ -588,39 +588,39 @@ http POST localhost:8088/orders customerId=1 customerName="Kang" itemId=2 itemNa
 
 ECR 생성
 ```
-aws ecr create-repository --repository-name user02-gateway --region ap-northeast-2
-aws ecr create-repository --repository-name user02-order --region ap-northeast-2
-aws ecr create-repository --repository-name user02-payment --region ap-northeast-2
-aws ecr create-repository --repository-name user02-ordermanagement --region ap-northeast-2
-aws ecr create-repository --repository-name user02-delivery --region ap-northeast-2
-aws ecr create-repository --repository-name user02-message --region ap-northeast-2
+aws ecr create-repository --repository-name user02-eks-gateway --region ap-northeast-2
+aws ecr create-repository --repository-name user02-eks-order --region ap-northeast-2
+aws ecr create-repository --repository-name user02-eks-payment --region ap-northeast-2
+aws ecr create-repository --repository-name user02-eks-ordermanagement --region ap-northeast-2
+aws ecr create-repository --repository-name user02-eks-delivery --region ap-northeast-2
+aws ecr create-repository --repository-name user02-eks-message --region ap-northeast-2
 ```
 
 Build 및 ECR 에 Build/Push 하기
 ```
 mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-gateway:v1.0 .
-docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-gateway:v1.0
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-gateway:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-gateway:v1.0
 
 mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-order:v1.0 .
-docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-order:v1.0
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-order:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-order:v1.0
 
 mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-payment:v1.0 .
-docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-payment:v1.0
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-payment:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-payment:v1.0
 
 mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-ordermanagement:v1.0 .
-docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-ordermanagement:v1.0
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-ordermanagement:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-ordermanagement:v1.0
 
 mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-delivery:v1.0 .
-docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-delivery:v1.0
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-delivery:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-delivery:v1.0
 
 mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-message:v1.0 .
-docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-message:v1.0
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-message:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-eks-message:v1.0
 ```
 
 Deploy 및 Service 생성
@@ -633,3 +633,12 @@ kubectl apply  -f delivery.yml
 kubectl apply  -f message.yml
 kubectl apply  -f gateway.yml
 ```
+
+Kafka 실행 후 확인
+![image](https://user-images.githubusercontent.com/47841725/127100743-4a0aca3b-72cd-4cef-bc19-1326fbdf31a0.png)
+
+kubectl get all로 확인
+![image](https://user-images.githubusercontent.com/47841725/127101158-2e6717fd-6f39-4d75-a083-9adc051fc2eb.png)
+
+
+

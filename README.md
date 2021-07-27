@@ -572,7 +572,12 @@ delivery 서비스의 PolicyHandler.java
 		</dependency>
 ```
 - 변경 후에도 구동 및 서비스 정상 작동 확인 완료
-
-![image](https://user-images.githubusercontent.com/22028798/126944811-d3bfc5f8-33b1-4118-b18f-ed29c4b9ed6c.png)
-![image](https://user-images.githubusercontent.com/22028798/126945508-71f966b9-566b-4269-b6c7-95c4177ae8dc.png)
+```
+# 주문을 먼저 한 후에
+http POST localhost:8088/orders customerId=1 customerName="Kang" itemId=2 itemName="Air conditional" qty=3 itemPrice=1500 deliveryAddress="Gangnam" deliveryPhoneNumber="010-0123-4567" orderStatus="orderStarted"
+```
+- Payment 승인 PUT
+![image](https://user-images.githubusercontent.com/47841725/127084025-8d0736c4-53b8-44c2-86d8-2e450333b36f.png)
+- Payment 확인 GET
+![image](https://user-images.githubusercontent.com/47841725/127084435-6a4a38e3-4e64-4f77-9053-6575abacae2a.png)
 

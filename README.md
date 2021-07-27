@@ -555,7 +555,7 @@ delivery 서비스의 PolicyHandler.java
 ```
 
 ## 폴리글랏 퍼시스턴스
-- CQRS 를 위한 Dashboard 서비스만 DB를 구분하여 적용함. 인메모리 DB인 hsqldb 사용.
+- Payment 서비스는 다른 곳에서 활용 될 수 있는 데이터라고 생각하여 DB를 분리하여 적용함. 인메모리 DB인 hsqldb 사용.
 
 ```xml
 		<!-- <dependency>

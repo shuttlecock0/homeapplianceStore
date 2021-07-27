@@ -525,44 +525,30 @@ fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템�
 (이벤트 드리븐 아키텍처)
 
 - 카프카를 이용하여 PubSub 으로 하나 이상의 서비스가 연동되었는가?
-카프카를 이용하여 주문완료 시 결제를 제외한 나머지 모든 마이크로서비스 트랜잭션은 Pub/Sub 관계로 구현했습니다.
+주문 후 결제를 제외한 나머지 마이크로서비스 트랜잭션은 Pub/Sub 관계인 **SAGA**패턴으로 구현함.
 
 - Correlation-key: 각 이벤트 건 (메시지)가 어떠한 폴리시를 처리할때 어떤 건에 연결된 처리건인지를 구별하기 위한 Correlation-key 연결을 제대로 구현 하였는가?
+findByOrderId를 통해 orderId값을 기준으로 건별로 처리하여 Correlation-key 관계를 형성합니다.
+아래는 Correlation-key를 보여주는 한 가지 예입니다.
 
-아래는 결제취소 이벤트(PayCanceled)를 카프카를 통해 쿠폰(coupon) 서비스에 연계받는 코드 내용이다. 
+delivery에서 카프카 리스너를 통해 cancelOrderTaken(주문 취소) 이벤트를 받아서 배송 취소 cancelDelivery Policy를 호출 하는 과정입니다. getOrderId()를 호출하여 Correlation-key 연결을 하고 있습니다.
 
-payment 서비스에서는 고객의 주문취소 -> 점주의 주문접수취소 시 PostUpdate로 PayCanceled 이벤트를 발생시키고,
+delivery 서비스의 PolicyHandler.java
 ```
-public class Payment {
-    @PostUpdate
-    public void onPostUpdate(){
-        PayCanceled payCanceled = new PayCanceled();
-        BeanUtils.copyProperties(this, payCanceled);
-        payCanceled.publishAfterCommit();
-    }
-```
-
-coupon 서비스에서는 카프카 리스너를 통해 payment PayCanceled 이벤트를 수신받아서 폴리시(cancelCoupon) 처리하였다. (getOrderId()를 호출하여 Correlation-key 연결)
-
-coupon 서비스의 PolicyHandler.java
-```
-@Service
-public class PolicyHandler{
-    @Autowired CouponRepository couponRepository;
-
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverPayCanceled_CancelCoupon(@Payload PayCanceled payCanceled){
+    public void wheneverCancelOrderTaken_CancelDelivery(@Payload CancelOrderTaken cancelOrderTaken){
 
-        if(!payCanceled.validate()) return;
+        if(!cancelOrderTaken.validate()) return;
 
-        System.out.println("\n\n##### listener CancelCoupon : " + payCanceled.toJson() + "\n\n");
+        System.out.println("\n\n##### listener CancelDelivery : " + cancelOrderTaken.toJson() + "\n\n");
 
-        couponRepository.findByOrderId(payCanceled.getOrderId()).ifPresent(coupon->{
-            coupon.setCouponStatus("invalid");
-            couponRepository.save(coupon);
-        }); 
+        // Logic //
+        deliveryRepository.findByOrderId(cancelOrderTaken.getOrderId()).ifPresent(delivery->{
+            delivery.setOrderStatus("cancelOrderTaken");
+            deliveryRepository.save(delivery);
+        });
 
     }
-    ...생략
 ```
+
 

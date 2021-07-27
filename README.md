@@ -755,14 +755,18 @@ order.yml 파일을 수정
 
 ## 무정지 재배포(Readiness Probe)
 - readiness 설정
+
 ![image](https://user-images.githubusercontent.com/47841725/127103375-808bc0ce-03af-4f62-8bc6-23df390f87b8.png)
 
 - 배포 시작
+
 - ![image](https://user-images.githubusercontent.com/47841725/127103631-18b8e874-aa68-4e55-866c-a7d63cc82131.png)
 
 - 배포 중 부하테스트
+
 ![image](https://user-images.githubusercontent.com/47841725/127103733-0a443994-9e56-4487-a4fd-cafbc14a2a03.png)
 
 - 정상 배포 확인
+
 ![image](https://user-images.githubusercontent.com/47841725/127103877-52728c81-c066-494e-be46-b090eb2da19b.png)
 

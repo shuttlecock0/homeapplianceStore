@@ -583,3 +583,55 @@ http POST localhost:8088/orders customerId=1 customerName="Kang" itemId=2 itemNa
 
 ![image](https://user-images.githubusercontent.com/47841725/127084435-6a4a38e3-4e64-4f77-9053-6575abacae2a.png)
 
+# 운영
+## Deploy/Pipeline
+
+각 구현체 들의 pipeline build script 는 seatReservation/kubernetes/kube 내 포함되어 있다. ( ex. order.yml )
+
+- Build 및 ECR 에 Build/Push 하기
+```
+# order
+cd order
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-order:v1 .
+docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-order:v1
+
+# payment
+cd ..
+cd payment
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-payment:v1 .
+docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-payment:v1
+
+# reservation
+cd ..
+cd reservation
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-reservation:v1 .
+docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-reservation:v1
+
+# dashboard
+cd ..
+cd dashboard
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-dashboard:v1 .
+docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-dashboard:v1
+
+# gateway
+cd ..
+cd gateway
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-gateway:v1 .
+docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-gateway:v1
+```
+
+- Kubernetes Deploy 및 Service 생성
+```
+cd ..
+kubectl apply  -f order.yml
+kubectl apply  -f payment.yml
+kubectl apply  -f reservation.yml
+kubectl apply  -f dashboard.yml
+kubectl apply  -f gateway.yml
+```
+

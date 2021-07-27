@@ -488,7 +488,7 @@ public class PaymentServiceFallback implements PaymentService {
 ```
 fall back이 없는 경우에는 결제시스템(Payment)가 다운되었을 때, 주문시스템(Order)으로 장애가 전파됩니다. 
 하지만 fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템이 장애가 전파되지 않습니다. 즉 fallback 처리를 통해 장애를 격리 할 수 있습니다.
-[!image](https://user-images.githubusercontent.com/47841725/127076915-cf7c603c-3cd6-4995-9bc2-0bdf828df4ac.PNG)
+[!image](https://user-images.githubusercontent.com/47841725/127077061-77119b32-564e-4592-bdb9-3d60bbc492a7.PNG)
 
 ## 비동기식 호출과 Eventual Consistency 
 (이벤트 드리븐 아키텍처)

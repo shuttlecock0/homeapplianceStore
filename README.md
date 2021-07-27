@@ -586,52 +586,50 @@ http POST localhost:8088/orders customerId=1 customerName="Kang" itemId=2 itemNa
 # 운영
 ## Deploy/Pipeline
 
-각 구현체 들의 pipeline build script 는 seatReservation/kubernetes/kube 내 포함되어 있다. ( ex. order.yml )
-
-- Build 및 ECR 에 Build/Push 하기
+ECR 생성
 ```
-# order
-cd order
-mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-order:v1 .
-docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-order:v1
-
-# payment
-cd ..
-cd payment
-mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-payment:v1 .
-docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-payment:v1
-
-# reservation
-cd ..
-cd reservation
-mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-reservation:v1 .
-docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-reservation:v1
-
-# dashboard
-cd ..
-cd dashboard
-mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-dashboard:v1 .
-docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-dashboard:v1
-
-# gateway
-cd ..
-cd gateway
-mvn package
-docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-gateway:v1 .
-docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/user09-gateway:v1
+aws ecr create-repository --repository-name user02-gateway --region ap-northeast-2
+aws ecr create-repository --repository-name user02-order --region ap-northeast-2
+aws ecr create-repository --repository-name user02-payment --region ap-northeast-2
+aws ecr create-repository --repository-name user02-ordermanagement --region ap-northeast-2
+aws ecr create-repository --repository-name user02-delivery --region ap-northeast-2
+aws ecr create-repository --repository-name user02-message --region ap-northeast-2
 ```
 
-- Kubernetes Deploy 및 Service 생성
+Build 및 ECR 에 Build/Push 하기
+```
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-gateway:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-gateway:v1.0
+
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-order:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-order:v1.0
+
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-payment:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-payment:v1.0
+
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-ordermanagement:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-ordermanagement:v1.0
+
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-delivery:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-delivery:v1.0
+
+mvn package
+docker build -t 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-message:v1.0 .
+docker push 879772956301.dkr.ecr.ap-northeast-2.amazonaws.com/user02-message:v1.0
+```
+
+Deploy 및 Service 생성
 ```
 cd ..
 kubectl apply  -f order.yml
 kubectl apply  -f payment.yml
-kubectl apply  -f reservation.yml
-kubectl apply  -f dashboard.yml
+kubectl apply  -f ordermanagement.yml
+kubectl apply  -f delivery.yml
+kubectl apply  -f message.yml
 kubectl apply  -f gateway.yml
 ```
-

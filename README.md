@@ -770,3 +770,30 @@ order.yml 파일을 수정
 
 ![image](https://user-images.githubusercontent.com/47841725/127103877-52728c81-c066-494e-be46-b090eb2da19b.png)
 
+
+## 오토스케일 아웃
+- 결제 서비스에 대한 Replica를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 5%를 넘어서면 Replica 를 10개까지 늘려준다.
+
+
+- payment의 yml 파일 수정
+
+![image](https://user-images.githubusercontent.com/22028798/126984382-91aaf13d-06b3-433f-bf39-1d1705fd11cd.png)
+ 
+- 오토스케일 적용
+```
+kubectl autoscale deploy payment --min=1 --max=10 --cpu-percent=5
+```
+
+![image](https://user-images.githubusercontent.com/47841725/127106329-d0bc46e9-79f5-4163-b6d0-f0178cf9b13f.png)
+
+
+- 오토스케일 적용 결과
+```
+siege -c10 -t10S -r10 -v --content-type "application/json" 'http://gateway:8080/orders POST {"itemId": 1, "customerId": 2}'
+```
+
+- 일정량의 cpu 사용량이 늘어나서 새로운 pod가 생성 후 처리해줌
+- 
+![image](https://user-images.githubusercontent.com/47841725/127106549-ea1fa580-182e-421c-bb27-e937203aaa41.png)
+
+![image](https://user-images.githubusercontent.com/47841725/127106437-7b430733-6fba-4184-9a65-40c119f7fcc5.png)

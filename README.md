@@ -760,7 +760,7 @@ order.yml 파일을 수정
 
 - 배포 시작
 
-- ![image](https://user-images.githubusercontent.com/47841725/127103631-18b8e874-aa68-4e55-866c-a7d63cc82131.png)
+![image](https://user-images.githubusercontent.com/47841725/127103631-18b8e874-aa68-4e55-866c-a7d63cc82131.png)
 
 - 배포 중 부하테스트
 
@@ -780,6 +780,7 @@ order.yml 파일을 수정
 ![image](https://user-images.githubusercontent.com/22028798/126984382-91aaf13d-06b3-433f-bf39-1d1705fd11cd.png)
  
 - 오토스케일 적용
+
 ```
 kubectl autoscale deploy payment --min=1 --max=10 --cpu-percent=5
 ```

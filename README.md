@@ -793,7 +793,7 @@ siege -c10 -t10S -r10 -v --content-type "application/json" 'http://gateway:8080/
 ```
 
 - 일정량의 cpu 사용량이 늘어나서 새로운 pod가 생성 후 처리해줌
-- 
+
 ![image](https://user-images.githubusercontent.com/47841725/127106549-ea1fa580-182e-421c-bb27-e937203aaa41.png)
 
 ![image](https://user-images.githubusercontent.com/47841725/127106437-7b430733-6fba-4184-9a65-40c119f7fcc5.png)

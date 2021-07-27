@@ -416,6 +416,37 @@ http GET localhost:8088/messages/2
 
 - 결제서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 
+- 주문을 받은 직후(@PostPersist) 결제를 요청하도록 처리
+```
+# Order.java (Entity)
+    @PostPersist
+    public void onPostPersist(){
+        OrderPlaced orderPlaced = new OrderPlaced();
+        BeanUtils.copyProperties(this, orderPlaced);
+        orderPlaced.publishAfterCommit();
+
+        //Following code causes dependency to external APIs
+        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+
+        homeappliancestore.external.Payment payment = new homeappliancestore.external.Payment();
+        // mappings goes here
+        payment.setOrderId(orderPlaced.getOrderId());
+        payment.setCustomerId(orderPlaced.getCustomerId());
+        payment.setCustomerName(orderPlaced.getCustomerName());
+        payment.setItemId(orderPlaced.getItemId());
+        payment.setItemName(orderPlaced.getItemName());
+        payment.setQty(orderPlaced.getQty());
+        payment.setItemPrice(orderPlaced.getItemPrice());
+        payment.setDeliveryAddress(orderPlaced.getDeliveryAddress());
+        payment.setDeliveryPhoneNumber(orderPlaced.getDeliveryPhoneNumber());
+        payment.setOrderStatus(orderPlaced.getOrderStatus());
+        OrderApplication.applicationContext.getBean(homeappliancestore.external.PaymentService.class)
+            .pay(payment);
+
+    }
+    # ...중략
+```
+
 - FallBack 처리 전
 ```
 # (class) PaymentService.java - fallback 처리 전
@@ -482,36 +513,6 @@ public class PaymentServiceFallback implements PaymentService {
 
 ```
 
-- 주문을 받은 직후(@PostPersist) 결제를 요청하도록 처리
-```
-# Order.java (Entity)
-    @PostPersist
-    public void onPostPersist(){
-        OrderPlaced orderPlaced = new OrderPlaced();
-        BeanUtils.copyProperties(this, orderPlaced);
-        orderPlaced.publishAfterCommit();
-
-        //Following code causes dependency to external APIs
-        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
-
-        homeappliancestore.external.Payment payment = new homeappliancestore.external.Payment();
-        // mappings goes here
-        payment.setOrderId(orderPlaced.getOrderId());
-        payment.setCustomerId(orderPlaced.getCustomerId());
-        payment.setCustomerName(orderPlaced.getCustomerName());
-        payment.setItemId(orderPlaced.getItemId());
-        payment.setItemName(orderPlaced.getItemName());
-        payment.setQty(orderPlaced.getQty());
-        payment.setItemPrice(orderPlaced.getItemPrice());
-        payment.setDeliveryAddress(orderPlaced.getDeliveryAddress());
-        payment.setDeliveryPhoneNumber(orderPlaced.getDeliveryPhoneNumber());
-        payment.setOrderStatus(orderPlaced.getOrderStatus());
-        OrderApplication.applicationContext.getBean(homeappliancestore.external.PaymentService.class)
-            .pay(payment);
-
-    }
-    # ...중략
-```
 fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템이 장애가 전파되지 않아 주문시스템은 계속 동작합니다. 즉 fallback 처리를 통해 장애를 격리 할 수 있습니다.
 ![image](https://user-images.githubusercontent.com/47841725/127079924-f7310e60-cc04-4c50-91a6-a810954375cb.png)
 

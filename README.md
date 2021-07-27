@@ -577,7 +577,9 @@ delivery 서비스의 PolicyHandler.java
 http POST localhost:8088/orders customerId=1 customerName="Kang" itemId=2 itemName="Air conditional" qty=3 itemPrice=1500 deliveryAddress="Gangnam" deliveryPhoneNumber="010-0123-4567" orderStatus="orderStarted"
 ```
 - Payment 승인 PUT
+
 ![image](https://user-images.githubusercontent.com/47841725/127084025-8d0736c4-53b8-44c2-86d8-2e450333b36f.png)
 - Payment 확인 GET
+
 ![image](https://user-images.githubusercontent.com/47841725/127084435-6a4a38e3-4e64-4f77-9053-6575abacae2a.png)
 

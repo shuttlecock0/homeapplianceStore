@@ -180,7 +180,7 @@
 	
         
 ## 헥사고날 아키텍처 다이어그램 도출
-<img src=""  width="90%" height="90%">
+![image](https://user-images.githubusercontent.com/47841725/127098567-9973086c-5455-4a52-a79e-981f6089dfd0.png)
 
 # 구현 
 

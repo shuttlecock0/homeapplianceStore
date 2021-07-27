@@ -583,6 +583,104 @@ http POST localhost:8088/orders customerId=1 customerName="Kang" itemId=2 itemNa
 
 ![image](https://user-images.githubusercontent.com/47841725/127084435-6a4a38e3-4e64-4f77-9053-6575abacae2a.png)
 
+## API 게이트웨이
+
+- API GW를 통하여 마이크로 서비스들의 진입점을 통일할 수 있는가?
+
+아래는 MSAEZ를 통해 자동 생성된 gateway 서비스의 application.yml이며, 마이크로서비스들의 진입점을 통일하여 URL Path에 따라서 마이크로서비스별 서로 다른 포트로 라우팅시키도록 설정되었다
+
+gateway 서비스의 application.yml 파일 
+
+```
+server:
+  port: 8088
+
+---
+spring:
+  profiles: default
+  cloud:
+    gateway:
+      routes:
+        - id: order
+          uri: http://localhost:8081
+          predicates:
+            - Path=/orders/**, /myPages/**
+        - id: ordermanagement
+          uri: http://localhost:8082
+          predicates:
+            - Path=/ordermgmts/** 
+        - id: delivery
+          uri: http://localhost:8083
+          predicates:
+            - Path=/deliveries/** 
+        - id: payment
+          uri: http://localhost:8084
+          predicates:
+            - Path=/payments/** 
+        - id: message
+          uri: http://localhost:8085
+          predicates:
+            - Path=/messages/** 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: order
+          uri: http://order:8080
+          predicates:
+            - Path=/orders/**, /myPages/**
+        - id: ordermanagement
+          uri: http://ordermanagement:8080
+          predicates:
+            - Path=/ordermgmts/** 
+        - id: delivery
+          uri: http://delivery:8080
+          predicates:
+            - Path=/deliveries/** 
+        - id: payment
+          uri: http://payment:8080
+          predicates:
+            - Path=/payments/** 
+        - id: message
+          uri: http://message:8080
+          predicates:
+            - Path=/messages/** 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080
+
+
+```
+
+Gateway 포트인 8088을 통해서 주문이 들어가는 것 확인
+
+![주문하기](https://user-images.githubusercontent.com/47841725/127101497-904b03f7-85ba-4621-a943-2eb6ac64d5c7.PNG)
+
 # 운영
 ## Deploy/Pipeline
 

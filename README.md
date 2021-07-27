@@ -486,13 +486,15 @@ public class PaymentServiceFallback implements PaymentService {
     }
     # ...중략
 ```
+fall back이 없는 경우에는 결제시스템(Payment)가 다운되었을 때, 주문시스템(Order)으로 장애가 전파됩니다. 
+하지만 fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템이 장애가 전파되지 않습니다. 즉 fallback 처리를 통해 장애를 격리 할 수 있습니다.
+[!image](https://user-images.githubusercontent.com/47841725/127076915-cf7c603c-3cd6-4995-9bc2-0bdf828df4ac.PNG)
 
 ## 비동기식 호출과 Eventual Consistency 
 (이벤트 드리븐 아키텍처)
 
 - 카프카를 이용하여 PubSub 으로 하나 이상의 서비스가 연동되었는가?
-
-카프카를 이용하여 주문완료 시 결제 처리 부붐을 제외한 나머지 모든 마이크로서비스 트랜잭션은 Pub/Sub 관계로 구현함.
+카프카를 이용하여 주문완료 시 결제를 제외한 나머지 모든 마이크로서비스 트랜잭션은 Pub/Sub 관계로 구현했습니다.
 
 - Correlation-key: 각 이벤트 건 (메시지)가 어떠한 폴리시를 처리할때 어떤 건에 연결된 처리건인지를 구별하기 위한 Correlation-key 연결을 제대로 구현 하였는가?
 

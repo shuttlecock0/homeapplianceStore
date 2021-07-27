@@ -416,8 +416,35 @@ http GET localhost:8088/messages/2
 
 - 결제서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 
+- FallBack 처리 전
 ```
-# (class) PaymentService.java
+# (class) PaymentService.java - fallback 처리 전
+
+package homeappliancestore.external;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Date;
+
+@FeignClient(name="payment", url="http://localhost:8084")
+public interface PaymentService {
+    @RequestMapping(method= RequestMethod.POST, path="/payments")
+    public void pay(@RequestBody Payment payment);
+
+}
+```
+fall back이 없는 경우에는 결제시스템(Payment)가 다운되었을 때, 주문시스템(Order)으로 장애가 전파되어 주문을 받을 수 없습니다.
+
+![image](https://user-images.githubusercontent.com/47841725/127079244-0df03f83-3c27-4bc9-a037-3305786470f8.png)
+
+
+- FallBack 처리 후
+```
+# (class) PaymentService.java - fallback 처리 후
 
 package homeappliancestore.external;
 
@@ -436,7 +463,6 @@ public interface PaymentService {
 
 }
 ```
-- FallBack 처리
 ```
 # (class) PaymentServiceFallback.java
 
@@ -486,11 +512,11 @@ public class PaymentServiceFallback implements PaymentService {
     }
     # ...중략
 ```
-fall back이 없는 경우에는 결제시스템(Payment)가 다운되었을 때, 주문시스템(Order)으로 장애가 전파됩니다. 
-하지만 fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템이 장애가 전파되지 않습니다. 즉 fallback 처리를 통해 장애를 격리 할 수 있습니다.
+fall back 처리를 하면 결제시스템이 다운 되어도 주문시스템이 장애가 전파되지 않아 주문시스템은 계속 동작합니다. 즉 fallback 처리를 통해 장애를 격리 할 수 있습니다.
+![image](https://user-images.githubusercontent.com/47841725/127079924-f7310e60-cc04-4c50-91a6-a810954375cb.png)
+
 
 위코드를 실행하면 아래와 같은 문구가 나오는 것을 확인할 수 있습니다.
-
 <img src="https://user-images.githubusercontent.com/47841725/127077061-77119b32-564e-4592-bdb9-3d60bbc492a7.PNG" width="80%" height="80%">
 
 

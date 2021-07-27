@@ -554,4 +554,25 @@ delivery 서비스의 PolicyHandler.java
     }
 ```
 
+## 폴리글랏 퍼시스턴스
+- CQRS 를 위한 Dashboard 서비스만 DB를 구분하여 적용함. 인메모리 DB인 hsqldb 사용.
+
+```xml
+		<!-- <dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency> -->
+
+        	<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+            		<version>2.4.0</version>
+			<scope>runtime</scope>
+		</dependency>
+```
+- 변경 후에도 구동 및 서비스 정상 작동 확인 완료
+
+![image](https://user-images.githubusercontent.com/22028798/126944811-d3bfc5f8-33b1-4118-b18f-ed29c4b9ed6c.png)
+![image](https://user-images.githubusercontent.com/22028798/126945508-71f966b9-566b-4269-b6c7-95c4177ae8dc.png)
 

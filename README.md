@@ -635,9 +635,11 @@ kubectl apply  -f gateway.yml
 ```
 
 Kafka 실행 후 확인
+
 ![image](https://user-images.githubusercontent.com/47841725/127100743-4a0aca3b-72cd-4cef-bc19-1326fbdf31a0.png)
 
 kubectl get all로 확인
+
 ![image](https://user-images.githubusercontent.com/47841725/127101158-2e6717fd-6f39-4d75-a083-9adc051fc2eb.png)
 
 
